@@ -11,5 +11,5 @@ It offers functionalities for adding new data entries, deleting existing entries
 
 ### Requirements:
 
-- Node.js and npm (or yarn) installed on your system.
+- Node.js and npm installed on your system.
 
