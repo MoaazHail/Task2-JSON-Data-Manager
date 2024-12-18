@@ -1,38 +1,76 @@
     const fs = require('fs'); 
+    const readline = require('readline-sync');
 
-    function search(item, object) {
+    function search(id, object) {
         for (let i = 0; i < object.length; i++) {
-            if (object[i].id === item ) {
-                console.log(object[i]);
+            if (object[i].id == id ) {
+                return object[i];
             }
         }
-        
+
     }
+
     function Add_data(item, object) {
         object.push(item);
         console.log("The New Item Is Added :)");
     }
 
-    function Delete_data(id_to_delete ,object) {
-        let filter = object.filter(item => item.id !== id_to_delete);
-        console.log(`The Product With Id ${id_to_delete} deleted `);
+    function Delete_data(id ,object) {
+        let filter = object.filter(item => item.id != id);
+        console.log(`The Product With Id ${id} deleted `);
 
         return filter;
     }
 
-    const new_data = {id:5,name:"product-5",price:20,status:"new"};
+    const message = 
+    `
+    Enter " 1 " : Display All Data
+    Enter " 2 " : Add New Product
+    Enter " 3 " : Search for Product By ID
+    Enter " 4 " : Delete Product By ID
+    ---------------------------------------\n`;
+    let choice = readline.question(message)
+    switch(choice){
+        case '1':
+            fs.readFile('./Data.json', "utf-8", (err, data) => {
+                if (err)console.error(err)
+                const myData = JSON.parse(data);
+                console.log(myData);
+            })
+            break;
+        case '2':
+            fs.readFile('./Data.json', "utf-8", (err, data) => {
+                if (err)console.error(err)
+                const myData = JSON.parse(data);
+                let newProduct = readline.question(`Please Enter The New Product \nLike this {id:5,name:"product-5",price:20,status:"new"}\n`);
+                newProduct = JSON.parse(newProduct);
+                Add_data(newProduct,myData);
+                
+                fs.writeFile("./Data.json",JSON.stringify(myData),(err)=>console.error(err));
+            })
+            break;
+        case '3':
+            fs.readFile('./Data.json', "utf-8", (err, data) => {
+                if (err)console.error(err)
+                const myData = JSON.parse(data);
+                let idForSearch = readline.question("Please Enter ID For Search :");
+                let searchProduct = search(idForSearch,myData);
+                console.log(searchProduct ? searchProduct : "This Product IS Not Found :(");
+            })
+            break;
+        case '4':
+            fs.readFile('./Data.json', "utf-8", (err, data) => {
+                if (err)console.error(err)
+                const myData = JSON.parse(data);
+                let idToDelete = readline.question("Please Enter ID To Delete :");
+                let data_filter = Delete_data(idToDelete,myData);
 
-    fs.readFile('./Data.json', "utf-8", (err, data) => {
-        if (err)console.error(err)
-        const my_data = JSON.parse(data);
-        console.log(my_data);
+                fs.writeFile("./Data.json",JSON.stringify(data_filter),(err)=>console.error(err));
+            })
+            break;
+        default:
+            console.log("Please Choice Only One Of This (1, 2, 3, 4)");
+            
 
-        Add_data(new_data,my_data);
-        fs.writeFile("./Data.json",JSON.stringify(my_data),(err)=>console.error(err));
+    }
 
-        search(5,my_data);
-        console.log(my_data);
-
-        let data_filter = Delete_data(5,my_data)
-        fs.writeFile("./Data.json",JSON.stringify(data_filter),(err)=>console.error(err));
-    });
